@@ -404,6 +404,38 @@ body {
   }
 
   &-front {
+    .card__preview--chip {
+      position: absolute;
+      top: 25px;
+      left: 25px;
+      width: 60px;
+      height: 45px;
+      background-size: contain;
+    }
+
+    .card__preview--logos {
+      position: absolute;
+      top: 25px;
+      right: 25px;
+      width: 85px;
+      height: 45px;
+
+      .card__preview--logo {
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: 100%;
+        height: 100%;
+        background-size: contain;
+        background-repeat: no-repeat;
+        background-position: right center;
+        transition: opacity 0.3s ease;
+      }
+      .card__preview--logo-mastercard {
+        width: 80%;
+      }
+    }
+
     .card__preview--number {
       position: absolute;
       top: 45%;
