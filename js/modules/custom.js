@@ -98,14 +98,44 @@ export default function custom() {
 
       animatedNumber.innerHTML = html;
 
-      cardNumberPreview.classList.add("animating");
+      element.classList.add("animating");
       setTimeout(() => {
-        cardNumberPreview.classList.remove("animating");
+        element.classList.remove("animating");
         animatedNumber.innerHTML = formattedNumber;
       }, 500);
     }
 
     lastCardNumberLength = digits.length;
+  }
+
+  function animateExpiryValue(container, oldValue, newValue, className) {
+    const containerHeight = container.offsetHeight;
+    container.style.height = containerHeight + "px";
+
+    container.querySelector(`.current-${className}`).remove();
+
+    const oldElement = document.createElement("span");
+    oldElement.classList.add(`${className}-old`);
+    oldElement.textContent = oldValue;
+    container.appendChild(oldElement);
+
+    const newElement = document.createElement("span");
+    newElement.classList.add(`${className}-new`);
+    newElement.textContent = newValue;
+    container.appendChild(newElement);
+
+    setTimeout(() => {
+      container.innerHTML = "";
+      const currentElement = document.createElement("span");
+      currentElement.classList.add(`current-${className}`);
+      currentElement.textContent = newValue;
+      container.appendChild(currentElement);
+    }, 500);
+
+    container.classList.add("expiry-flash");
+    setTimeout(() => {
+      container.classList.remove("expiry-flash");
+    }, 300);
   }
 
   cardNumberInput.addEventListener("input", function (event) {
@@ -272,65 +302,11 @@ export default function custom() {
     const yearContainer = expiryValue.querySelector(".year-container");
 
     if (monthChanged) {
-      const containerHeight = monthContainer.offsetHeight;
-
-      monthContainer.style.height = containerHeight + "px";
-
-      monthContainer.querySelector(".current-month").remove();
-
-      const oldMonth = document.createElement("span");
-      oldMonth.classList.add("month-old");
-      oldMonth.textContent = lastMonth;
-      monthContainer.appendChild(oldMonth);
-
-      const newMonth = document.createElement("span");
-      newMonth.classList.add("month-new");
-      newMonth.textContent = month;
-      monthContainer.appendChild(newMonth);
-
-      setTimeout(() => {
-        monthContainer.innerHTML = "";
-        const currentMonth = document.createElement("span");
-        currentMonth.classList.add("current-month");
-        currentMonth.textContent = month;
-        monthContainer.appendChild(currentMonth);
-      }, 500);
-
-      monthContainer.classList.add("expiry-flash");
-      setTimeout(() => {
-        monthContainer.classList.remove("expiry-flash");
-      }, 300);
+      animateExpiryValue(monthContainer, lastMonth, month, "month");
     }
 
     if (yearChanged) {
-      const containerHeight = yearContainer.offsetHeight;
-
-      yearContainer.style.height = containerHeight + "px";
-
-      yearContainer.querySelector(".current-year").remove();
-
-      const oldYear = document.createElement("span");
-      oldYear.classList.add("year-old");
-      oldYear.textContent = lastYear;
-      yearContainer.appendChild(oldYear);
-
-      const newYear = document.createElement("span");
-      newYear.classList.add("year-new");
-      newYear.textContent = year;
-      yearContainer.appendChild(newYear);
-
-      setTimeout(() => {
-        yearContainer.innerHTML = "";
-        const currentYear = document.createElement("span");
-        currentYear.classList.add("current-year");
-        currentYear.textContent = year;
-        yearContainer.appendChild(currentYear);
-      }, 500);
-
-      yearContainer.classList.add("expiry-flash");
-      setTimeout(() => {
-        yearContainer.classList.remove("expiry-flash");
-      }, 300);
+      animateExpiryValue(yearContainer, lastYear, year, "year");
     }
 
     if (!monthChanged && !yearChanged) {
@@ -356,18 +332,6 @@ export default function custom() {
   }
 
   setupExpiryListeners();
-
-  if (!document.querySelector(".card__preview--cvv-container")) {
-    const cvvContainer = document.createElement("div");
-    cvvContainer.classList.add("card__preview--cvv-container");
-
-    const cvvValue = document.createElement("div");
-    cvvValue.classList.add("card__preview--cvv-value");
-    cvvValue.textContent = "•••";
-
-    cvvContainer.appendChild(cvvValue);
-    cardPreview.appendChild(cvvContainer);
-  }
 
   cardCvvInput.addEventListener("focus", () => {
     cardPreview.classList.add("is-flipped");
